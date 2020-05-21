@@ -2,58 +2,58 @@
 
 class Usuario {
 
-	private $idteste;
-	private $nome;
-	private $idade;
-	private $inserido;
+	private $idusuario;
+	private $deslogin;
+	private $dessenha;
+	private $dtcadastro;
 
-	public function getIdteste(){
-		return $this->idteste;
+	public function getIdusuario(){
+		return $this->idusuario;
 	}
 
-	public function setIdteste($value){
-		$this->idteste=$value;
+	public function setIdusuario($value){
+		$this->idusuario=$value;
 	}
 
-	public function getNome(){
-		return $this->nome;
+	public function getDeslogin(){
+		return $this->deslogin;
 	}
 
-	public function setNome($value){
-		$this->nome=$value;
+	public function setDeslogin($value){
+		$this->deslogin=$value;
 	}
 
-	public function getIdade(){
-		return $this->idade;
+	public function getDessenha(){
+		return $this->dessenha;
 	}
 
-	public function setIdade($value){
-		$this->idade=$value;
+	public function setDessenha($value){
+		$this->dessenha=$value;
 	}
 
-	public function getInserido(){
-		return $this->inserido;
+	public function getDtcadastro(){
+		return $this->dtcadastro;
 	}
 
-	public function setInserido($value){
-		$this->inserido=$value;
+	public function setDtcadastro($value){
+		$this->dtcadastro=$value;
 	}
 
 	public function loadById($id){
 
 		$sql = new Sql();
-		$results = $sql->select("SELECT * FROM teste WHERE id_teste = :id", array(
+		$results = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(
 			":ID"=>$id
 		));
 
-		if (count($results) > 0){
+		if (isset($results[0])){
 
 			$row = $results[0];
 
-			$this->setIdteste($row['id_teste']);
-			$this->setNome($row['nome']);
-			$this->setIdade($row['idade']);
-			$this->setInserido(new DateTime($row['inserido']));
+			$this->setIdusuario($row['idusuario']);
+			$this->setDeslogin($row['deslogin']);
+			$this->setDessenha($row['dessenha']);
+			$this->setDtcadastro(new DateTime($row['dtcadastro']));
 
 		}
 	}
@@ -61,10 +61,10 @@ class Usuario {
 	public function __toString(){
 
 		return json_encode(array(
-			"idteste"=>$this->getIdteste(),
-			"nome"=>$this->getNome(),
-			"idade"=>$this->getIdade(),
-			"inserido"=>$this->getInserido()->format("d/m/Y H:i:s")
+			"idusuario"=>$this->getIdusuario(),
+			"deslogin"=>$this->getDeslogin(),
+			"dessenha"=>$this->getDessenha(),
+			"dtcadastro"=>$this->getDtcadastro()->format("d/m/Y H:i:s")
 		));
 	}
 
