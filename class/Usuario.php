@@ -39,7 +39,7 @@ class Usuario {
 		$this->dtcadastro=$value;
 	}
 
-	public function loadById($id){
+	public function loadById($id){ //Retorna apenas o item selecionado.
 
 		$sql = new Sql();
 		$results = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(
@@ -48,15 +48,77 @@ class Usuario {
 
 		if (isset($results[0])){
 
-			$row = $results[0];
-
-			$this->setIdusuario($row['idusuario']);
-			$this->setDeslogin($row['deslogin']);
-			$this->setDessenha($row['dessenha']);
-			$this->setDtcadastro(new DateTime($row['dtcadastro']));
+			$this->setData($results[0]);
 
 		}
 	}
+
+	public static function getList(){ //Retorna toda a lista.
+
+		$sql = new Sql();
+		return $sql->select("SELECT * FROM tb_usuarios");
+	}
+
+
+	public static function search($login){
+
+		$slq = new Sql();
+
+		return $slq->select("SELECT * FROM tb_usuarios WHERE deslogin LIKE :SEARCH", array(
+			':SEARCH'=>"%" . $login . "%"
+
+		));
+
+	}
+
+	public function login($login, $password){
+
+		$sql = new Sql();
+		$results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(
+			":LOGIN"=>$login,
+			":PASSWORD"=>$password
+		));
+
+		if (isset($results[0])) {
+
+			$this->setData($results[0]);
+
+		} else {
+
+			throw new Exception("Login e/ou senha invalidos");
+			
+		}
+	}
+
+	public function setData($data){
+
+		$this->setIdusuario($data['idusuario']);
+		$this->setDeslogin($data['deslogin']);
+		$this->setDessenha($data['dessenha']);
+		$this->setDtcadastro(new DateTime($data['dtcadastro']));
+	}
+
+
+	public function insert(){
+
+		$sql = new Sql();
+
+		$results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)", array( //Passado como procedure
+			':LOGIN'=>$this->getDeslogin(),
+			':PASSWORD'=>$this->getDessenha()
+		)); 
+
+		if (isset($results[0])){
+
+			$this->setData($results[0]);
+		}
+	}
+
+	public function __construct($login = "", $password = ""){ // Ao instanciar Usuario ja irá passar os dados, se nao passar nada as variaveis ficam em branco devido as "", nao afetando assim os outro metodos.
+		$this->setDeslogin($login);
+		$this->setDessenha($password);
+	}
+
 
 	public function __toString(){
 
